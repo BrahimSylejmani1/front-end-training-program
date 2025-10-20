@@ -1,0 +1,9 @@
+node_modules/
+# build code
+public/*
+!public/favicon.png
+.idea/*
+.history/*
+package-lock.json
+
+/tests/coverage
