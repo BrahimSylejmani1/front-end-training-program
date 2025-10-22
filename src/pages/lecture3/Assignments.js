@@ -105,39 +105,43 @@ class Assignments extends React.Component {
    * Function as Scatter y = square root of the absolute value of ((x ^ 2) + (x * 4))
    */
   function2 = (props) => {
-    const values = randomValuesOfLength(30)
-    const options = {
-      ...axisGraphDefaultOptions,
-      series: [
-        {
-          data: values.map(x => [x, x * 2]),
-          type: GRAPH_TYPES.SCATTER
-        }
-      ]
-    }
-    const title = 'Function as Scatter y = square root of the absolute value of ((x ^ 2) + (x * 4))'
-    return <Card options={options} {...props} title={title} />
+      const values = randomValuesOfLength(30)
+      const options = {
+          ...axisGraphDefaultOptions,
+          series: [
+              {
+                  data: values.map(x => [x, Math.sqrt(Math.abs(Math.pow(x, 2) + (x * 4)))]),
+                  type: GRAPH_TYPES.SCATTER
+              }
+          ]
+      }
+      const title = 'Function as Scatter y = √|x² + 4x|'
+      return <Card options={options} {...props} title={title} />
   }
 
-  /**
+    /**
    * Function y = If 3^2 - x^2 > 0 than square root of (3^2 - x^2). If 3^2 - x^2 < 0 then - square root of absolute value of (3^2 - x^2)
    */
-  function3 = (props) => {
-    const values = randomValuesOfLength(30)
-    const options = {
-      ...axisGraphDefaultOptions,
-      series: [
-        {
-          data: values.map(x => [x, x * 2]),
-          type: GRAPH_TYPES.SCATTER
+    function3 = (props) => {
+        const values = randomValuesOfLength(30)
+        const options = {
+            ...axisGraphDefaultOptions,
+            series: [
+                {
+                    data: values.map(x => {
+                        const diff = Math.pow(3, 2) - Math.pow(x, 2)
+                        const y = diff > 0 ? Math.sqrt(diff) : -Math.sqrt(Math.abs(diff))
+                        return [x, y]
+                    }),
+                    type: GRAPH_TYPES.SCATTER
+                }
+            ]
         }
-      ]
+        const title = 'Piecewise function based on 3² - x²'
+        return <Card options={options} {...props} title={title} />
     }
-    const title = 'Function y = If 3^2 - x^2 > 0 than square root of (3^2 - x^2). If 3^2 - x^2 < 0 then -1 * square root of absolute value of (3^2 - x^2)'
-    return <Card options={options} {...props} title={title} />
-  }
 
-  /**
+    /**
    * Function as Line: y = sin(x)
    */
   function4 = (props) => {
@@ -146,7 +150,7 @@ class Assignments extends React.Component {
       ...axisGraphDefaultOptions,
       series: [
         {
-          data: values.map(x => [x, x * 2]),
+          data: values.map(x => [x, Math.sin(x)]),
           type: GRAPH_TYPES.SCATTER
         }
       ]
@@ -163,7 +167,7 @@ class Assignments extends React.Component {
       ...axisGraphDefaultOptions,
       series: [
         {
-          data: values.map(x => [x, x * 2]),
+          data: values.map(x => [x, Math.cos(x)]),
           type: GRAPH_TYPES.SCATTER
         }
       ]
@@ -183,13 +187,13 @@ class Assignments extends React.Component {
       series: [
         {
           // Sin-us
-          data: valuesSin.map(x => [x, x * 2]),
-          type: GRAPH_TYPES.SCATTER
+          data: valuesSin.map(x => [x, Math.sin(x)]),
+          type: GRAPH_TYPES.LINE
         },
         {
           // Cos-inus
-          data: valuesSin.map(x => [x, x * 2]),
-          type: GRAPH_TYPES.SCATTER
+          data: valuesSin.map(x => [x, Math.cos(x)]),
+          type: GRAPH_TYPES.LINE
         }
       ]
     }
@@ -201,71 +205,99 @@ class Assignments extends React.Component {
    * I want to see the top 4 performing words, given the randomCategoryData, the top 4 with the highest random generated value
    */
   function7 = (props) => {
-    const data = this.randomCategoryData(24, true)
-    const options = {
-      name: 'Tree',
-      series: [
-        {
-          data,
-          type: GRAPH_TYPES.TREEMAP
-        }
-      ]
-    }
-    const title = 'Filter out top 4 most common words, based on their random generated value'
-    return <Card options={options} {...props} title={title} />
+      const data = this.randomCategoryData(24, true)
+      const top4 = data.sort((a, b) => b.value - a.value).slice(0, 4)
+      const options = {
+          series: [
+              {
+                  data: top4.map(d => ({ name: d.name, value: d.value })),
+                  type: GRAPH_TYPES.TREEMAP
+              }
+          ]
+      }
+      const title = 'Top 4 Most Common Words (by value)'
+      return <Card options={options} {...props} title={title} />
   }
 
-  /**
+
+    /**
    * Calculate the average within the groups now, and show that here. Check the random Category data on how it generates those
    */
-  function8 = (props) => {
-    const data = this.randomCategoryData(8, true)
-    const options = {
-      series: [
-        {
-          data,
-          type: GRAPH_TYPES.PIE
-        }
-      ]
-    }
-    return <Card options={options} {...props} title={'The Average within Groups'} />
-  }
+    function8 = (props) => {
+        const data = this.randomCategoryData(20, true)
 
-  /**
+        const grouped = data.reduce((acc, { group, value }) => {
+            if (!acc[group]) acc[group] = []
+            acc[group].push(value)
+            return acc
+        }, {})
+
+        const averages = Object.keys(grouped).map(g => ({
+            name: g,
+            value: grouped[g].reduce((a, b) => a + b, 0) / grouped[g].length
+        }))
+
+        const options = {
+            series: [
+                {
+                    data: averages,
+                    type: GRAPH_TYPES.PIE
+                }
+            ]
+        }
+        const title = 'Average Value within Groups'
+        return <Card options={options} {...props} title={title} />
+    }
+
+
+    /**
    * Calculate the values such that they are cumulative, each subsequent is summed with the total so far!
    */
-  function9 = (props) => {
-    const data = this.randomCategoryData(8)
-    const options = {
-      xAxis: {
-        type: 'category',
-        data: data.map(next => next.name)
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
-        {
-          data,
-          type: GRAPH_TYPES.BAR
-        }
-      ]
-    }
-    const title = 'Calculate the values such that they are cumulative, each subsequent is summed with the total so far!'
-    return <Card options={options} {...props} title={title} />
-  }
+    function9 = (props) => {
+        const data = this.randomCategoryData(8, true)
+        let cumulative = 0
+        const cumulativeData = data.map(d => {
+            cumulative += d.value
+            return { name: d.name, value: cumulative }
+        })
 
-  /**
+        const options = {
+            xAxis: {
+                type: 'category',
+                data: cumulativeData.map(d => d.name)
+            },
+            yAxis: { type: 'value' },
+            series: [
+                {
+                    data: cumulativeData.map(d => d.value),
+                    type: GRAPH_TYPES.BAR
+                }
+            ]
+        }
+        const title = 'Cumulative Values'
+        return <Card options={options} {...props} title={title} />
+    }
+
+
+    /**
    * TODO: Implement Binary Search Method
    * @param {Array} values 
    * @param {int} search 
    */
-  binarySearch(values, search) {
-    // implement 
+    binarySearch(values, search) {
+        let low = 0
+        let high = values.length - 1
 
-    // -1 means I cannot find it. Todo return the index
-    return -1
-  }
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2)
+            if (values[mid] === search) return mid
+            if (values[mid] < search) low = mid + 1
+            else high = mid - 1
+        }
+
+        return -1
+    }
+
 
   render() {
     const { classes, section } = this.props
