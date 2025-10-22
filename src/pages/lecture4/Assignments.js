@@ -50,6 +50,55 @@ const cv = `{
 
 class Assignments extends React.Component {
 
+     cvData = {
+        name: "Brahim Sylejmani",
+        title: "Software Engineer",
+         email: "brahim@purchaise.ai",
+        phone: "+383 44 123 456",
+        education: [
+            {
+                type: "Bachelor",
+                field: "Computer Science and Engineering",
+                institution: "UBT University",
+                from: moment("01-10-2021", "DD-MM-YYYY").format("MMMM YYYY"),
+                to:  moment("01-9-2025", "DD-MM-YYYY").format("MMMM YYYY"),
+            },
+            {
+                type: "Master",
+                field: "Computer and Software Engineering",
+                institution: "FIEK - Faculty of Electronic and Computer Engineering",
+                from: moment("15-09-2025", "DD-MM-YYYY").format("MMMM YYYY"),
+                to: "Present"
+            }
+        ],
+        experience: [
+            {
+                role: "Back-end Engineer Intern",
+                company: "PurchAIse AI",
+                from: moment("08-09-2025", "DD-MM-YYYY").format("MMMM YYYY"),
+                to: "Present",
+                description: "Worked on GraphQL, React, and AI assistant integrations."
+            },
+            {
+                role: "Back-End Trainee",
+                company: "Prime Retail & Trade Solutions",
+                from: "June 2025",
+                to: "August 2025",
+                description: "Implemented Play Framework APIs, MongoDB queries, and Redis caching."
+            }
+        ],
+        skills: [
+            { name: "Java", level: 8 },
+            { name: "Spring Boot", level: 7 },
+            { name: "ReactJS", level: 9 },
+            { name: "MongoDB", level: 7 },
+        ],
+        languages: [
+            { name: "English", level: "Fluent" },
+            { name: "Albanian", level: "Native" }
+        ]
+    }
+
   render() {
     const { classes, section } = this.props
     return (
@@ -74,6 +123,56 @@ class Assignments extends React.Component {
         </Typography>
 
         {/* Your implementation starts here */}
+          <div className={classes.content}>
+              <Typography variant="title">{this.cvData.name}</Typography>
+              <Typography variant="p">{this.cvData.title}</Typography>
+              <Typography variant="p">📧 {this.cvData.email}</Typography>
+              <Typography variant="p">📞 {this.cvData.phone}</Typography>
+
+              <Divider />
+
+              <Typography variant="subtitle">Education</Typography>
+              {this.cvData.education.map((edu, i) => (
+                  <div key={i}>
+                      <Italic>{edu.type}</Italic> — {edu.field} at {edu.institution} ({edu.from} - {edu.to})
+                  </div>
+              ))}
+
+              <Divider />
+
+              <Typography variant="subtitle">Experience</Typography>
+              {this.cvData.experience.map((exp, i) => (
+                  <div key={i}>
+                      <b>{exp.role}</b> at {exp.company} ({exp.from} - {exp.to})
+                      <div>{exp.description}</div>
+                  </div>
+              ))}
+
+              <Divider />
+
+              <Typography variant="subtitle">Skills</Typography>
+              <ul>
+                  {this.cvData.skills.map((skill, i) => (
+                      <li key={i}>
+                          <span>{skill.name}</span>
+                          <span>({skill.level}/10)</span>
+                      </li>
+                  ))}
+              </ul>
+
+
+              <Divider />
+
+              <Typography variant="subtitle">Languages</Typography>
+              <ul>
+                  {this.cvData.languages.map((lang, i) => (
+                      <li key={i}>
+                          <span>{lang.name}</span>
+                          <span>{lang.level}</span>
+                      </li>
+                  ))}
+              </ul>
+          </div>
       </Fragment>
     )
   }
