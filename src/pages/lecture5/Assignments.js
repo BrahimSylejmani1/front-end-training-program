@@ -12,7 +12,7 @@ import Typography from "presentations/Typography";
 import React, { Fragment } from "react";
 import EditIcon from '@material-ui/icons/Edit'
 import RemoveIcon from '@material-ui/icons/Clear'
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, ListItem, RadioGroup, Radio, FormControlLabel } from "@material-ui/core";
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, MenuItem, RadioGroup, Radio, FormControlLabel } from "@material-ui/core";
 import Chart from "presentations/Chart";
 
 
@@ -86,17 +86,30 @@ class Assignments extends React.Component {
     super(props)
 
     this.state = {
-      items: [
-        {
-          name: 'asfg',
-          lastName: 'sdagasgh',
-          username: 'agsdg',
-          type: 'Admin',
-          age: 20,
-          gender: 'Male'
-        }
-      ]
+        items: [
+            { name: 'John', lastName: 'Doe', username: 'jdoe', type: 'Admin', age: 22, gender: 'Male' },
+            { name: 'Sara', lastName: 'Smith', username: 'sara', type: 'Normal', age: 27, gender: 'Female' }
+        ],
+        dialogOpen: false,
+        editIndex: null,
+        userModel: { name:"", lastName: "", username: "", type: "Admin", age: "", gender: "M" },
     }
+  }
+
+  onAddNew = () => {
+      this.setState({
+          dialogOpen: true,
+          editIndex: null,
+          userModel: { name:"", lastName: "", username: "", type: "Admin", age: "", gender: "M" },
+      })
+  }
+
+  onEdit = (user, index) => {
+      this.setState({
+          dialogOpen: true,
+          editIndex: index,
+          userModel: {...user}
+      })
   }
 
   onDelete = (which, index) => {
@@ -104,16 +117,84 @@ class Assignments extends React.Component {
       items: this.state.items.filter((next, i) => index !== i)
     })
   }
-  /**
+
+    onSave = () => {
+        const { editIndex, userModel, items } = this.state
+        if (editIndex === null) {
+            this.setState({ items: [...items, userModel], dialogOpen: false })
+        } else {
+            const updated = [...items]
+            updated[editIndex] = userModel
+            this.setState({ items: updated, dialogOpen: false })
+        }
+    }
+
+    onChange = (field, value) => {
+        this.setState(prev => ({
+            userModel: { ...prev.userModel, [field]: value }
+        }))
+    }
+
+    onCancel = () => {
+        this.setState({ dialogOpen: false });
+    };
+
+    getAverageAgeChart() {
+        const { items, dialogOpen, userModel } = this.state;
+        const groups = { Admin: [], Normal: [] };
+        items.forEach(u => {
+            if (groups[u.type]) groups[u.type].push(Number(u.age));
+        });
+        const avg = type =>
+            groups[type].length
+                ? groups[type].reduce((a, b) => a + b, 0) / groups[type].length
+                : 0;
+        return {
+            series: [{
+                name: 'Average age between types',
+                type: 'pie',
+                data: [
+                    { name: 'Admin', value: avg('Admin') },
+                    { name: 'Normal', value: avg('Normal') }
+                ]
+            }]
+        };
+    }
+
+    getGenderChart() {
+        const { items, dialogOpen, userModel } = this.state;
+
+        const males = items.filter(u => u.gender === 'Male').length;
+        const females = items.filter(u => u.gender === 'Female').length;
+        return {
+            series: [{
+                name: 'Gender Distribution',
+                type: 'pie',
+                data: [
+                    { name: 'Male', value: males },
+                    { name: 'Female', value: females }
+                ]
+            }]
+        };
+    }
+
+
+
+    /**
    * TODO: Implement Binary Search Tree Method
    * @param {Object} node 
    * @param {int} search 
    */
   binarySearchTree(node, search) {
-    // implement 
-
-    // -1 means I cannot find it. Todo return the node
-    return -1
+      if(!node) return -1;
+      if(node.value === search) {
+          return node;
+      }
+      if(search < node.value){
+          return this.binarySearchTree(node.left, search);
+      }else{
+          return this.binarySearchTree(node.right, search);
+      }
   }
 
   render() {
@@ -130,43 +211,6 @@ class Assignments extends React.Component {
     }
 
     // TODO: bind this to the model, calculate it based on the list of items
-    const averageAge = {
-      series: [
-        {
-          name: 'Average age between types',
-          type: 'pie',
-          data: [
-            {
-              name: 'Admin',
-              value: 37
-            },
-            {
-              name: 'Normal',
-              value: 28
-            }
-          ]
-        }
-      ]
-    }
-    // TODO: bind this to the model, calculate it based on the list of items
-    const genderEquality = {
-      series: [
-        {
-          name: 'Average age between types',
-          type: 'pie',
-          data: [
-            {
-              name: 'Male',
-              value: 3
-            },
-            {
-              name: 'Female',
-              value: 4
-            }
-          ]
-        }
-      ]
-    }
 
     return (
       <Fragment>
@@ -189,7 +233,7 @@ class Assignments extends React.Component {
           </ol>
         </Typography>
         <TextField fullWidth margin="normal" value={''} label="Search"/>
-        <Button color="primary">Add New Item</Button>
+        <Button color="primary" variant="contained" onClick={this.onAddNew}>Add New Item</Button>
         <Table>
           <TableHead>
             <TableRow>
@@ -212,7 +256,7 @@ class Assignments extends React.Component {
                 <TableCell>{user.age}</TableCell>
                 <TableCell>{user.gender}</TableCell>
                 <TableCell>
-                  <IconButton>
+                  <IconButton onClick={()=> this.onEdit(user, index)}>
                     <EditIcon />
                   </IconButton>
                   <IconButton onClick={(event) => this.onDelete(user, index)}>
@@ -222,47 +266,59 @@ class Assignments extends React.Component {
               </TableRow>
             ))}
           </TableBody>
-        </Table> 
-        <Dialog open={false} onClose={e => {console.log(e)}}>
-          <DialogContent>
-            <TextField fullWidth margin="normal" value={''} label="Name"/>
-            <TextField fullWidth margin="normal" value={''} label="Last Name"/>
-            <TextField fullWidth margin="normal" value={''} label="User Name"/>
-            <TextField fullWidth margin="normal" select value={'Admin'} label="Select Type">
-              <ListItem value="Admin">Admin</ListItem>
-              <ListItem value="Normal">Normal</ListItem>
-            </TextField>
-            <TextField fullWidth margin="normal" value={''} label="Age"/>
-            <RadioGroup name="gender" value="F">
-              <FormControlLabel value="M" control={<Radio />} label="Male"/>
-              <FormControlLabel value="F" control={<Radio />} label="Female"/>
-            </RadioGroup>
-          </DialogContent>
-          <DialogTitle>
-            My Awesome Dialog
-          </DialogTitle>
-          <DialogActions>
-            <Button color="secondary">
-              Cancel
-            </Button>
-            <Button color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <div className={classes.graphs}>
-          <Card options={averageAge} {...cardProps} title={'Average age between types'} />
-          <Card options={genderEquality} {...cardProps} title={'Males vs Females between types'} />
-        </div>
-        <Typography variant='p'>
-          Title: "Implement the Binary Search Tree"<br />
-          Description: "Using Binary Search Tree I will search for the given value at the given tree structure"<br />
-          To understand how binary search tree works visit: <SimpleLink href="https://www.tutorialspoint.com/data_structures_algorithms/binary_search_tree.htm">Binary Search Tree Explanation</SimpleLink><br />
-        </Typography>
-        <Typography variant='p'>
-          Implement the algorythm that searches the given tree and returns the node where the value {search} exists:
-        </Typography>
-        <img src={BinarySearchTreeImage} />
+        </Table>
+          <Dialog open={this.state.dialogOpen} onClose={this.onCancel}>
+              <DialogTitle>{this.state.editIndex === null ? "Add User" : "Edit User"}</DialogTitle>
+              <DialogContent>
+                  <TextField fullWidth margin="normal" label="Name"
+                             value={this.state.userModel.name}
+                             onChange={e => this.onChange('name', e.target.value)} />
+                  <TextField fullWidth margin="normal" label="Last Name"
+                             value={this.state.userModel.lastName}
+                             onChange={e => this.onChange('lastName', e.target.value)} />
+                  <TextField fullWidth margin="normal" label="Username"
+                             value={this.state.userModel.username}
+                             onChange={e => this.onChange('username', e.target.value)} />
+                  <TextField fullWidth margin="normal" select label="Type"
+                             value={this.state.userModel.type}
+                             onChange={e => this.onChange('type', e.target.value)}>
+                      <MenuItem value="Admin">Admin</MenuItem>
+                      <MenuItem value="Normal">Normal</MenuItem>
+                  </TextField>
+                  <TextField fullWidth margin="normal" label="Age"
+                             value={this.state.userModel.age}
+                             onChange={e => this.onChange('age', e.target.value)} />
+                  <RadioGroup
+                      row
+                      name="gender"
+                      value={this.state.userModel.gender}
+                      onChange={({ target: { value } }) => this.onChange('gender', value)}
+                  >
+                      <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                      <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                  </RadioGroup>
+
+              </DialogContent>
+              <DialogActions>
+                  <Button color="secondary" onClick={this.onCancel}>Cancel</Button>
+                  <Button color="primary" onClick={this.onSave}>Save</Button>
+              </DialogActions>
+          </Dialog>
+          <div className={classes.graphs}>
+              <Card options={this.getAverageAgeChart()} {...cardProps} title={'Average age between types'} />
+              <Card options={this.getGenderChart()} {...cardProps} title={'Males vs Females'} />
+          </div>
+          <Typography variant='p'>
+              Title: "Implement the Binary Search Tree"<br />
+              Description: "Using Binary Search Tree I will search for the given value at the given tree structure"<br />
+              To understand how binary search tree works visit:
+              <SimpleLink href="https://www.tutorialspoint.com/data_structures_algorithms/binary_search_tree.htm"> Binary Search Tree Explanation</SimpleLink><br />
+          </Typography>
+          <Typography variant='p'>
+              The algorithm should find the node with value {search}.<br />
+              Result: {value !== -1 ? JSON.stringify(value) : "Not found"}
+          </Typography>
+          <img src={BinarySearchTreeImage} alt="Binary Search Tree" style={{ marginTop: 16, width: '60%' }} />
       </Fragment>
     )
   }
