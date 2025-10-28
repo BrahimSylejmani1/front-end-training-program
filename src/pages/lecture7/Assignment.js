@@ -13,6 +13,7 @@ import CollapseDrag from 'pages/lecture7/assignments/CollapseDrag'
 import Position from 'pages/lecture7/assignments/Position'
 import Resizable from 'pages/lecture7/assignments/Resizable'
 import Grid from 'pages/lecture7/assignments/Grid'
+import Cv from "pages/lecture7/Cv";
 
 const styles = ({ typography }) => ({
   root: {},
@@ -59,22 +60,30 @@ const containerStyles = (theme) => ({
 const Container = (props) => {
   const { classes, children } = props
 
-  // get all Nav components to the left
+    const childrenArray = React.Children.toArray(children)
 
-  // get all Info components to the right
+    const navChildren = childrenArray.filter(
+        (child) => React.isValidElement(child) && child.type.name === "Nav")
 
-  // all the rest place them on middle
+    const infoChildren =  childrenArray.filter(
+        (child) => React.isValidElement(child) && child.type.name === "Info")
+
+    const otherChildren = childrenArray.filter(
+        (child) => React.isValidElement(child) && !["Nav", "Info"].includes(child.type.name));
+
   return (
     <div className={classes.root}>
       <div className={classes.side}>
         <Typography variant='title'>Left Nav</Typography>
+          {navChildren}
       </div>
       <div className={classes.middle}>
         <Typography variant='title'>Content</Typography>
-        {children}
+        {otherChildren}
       </div>
       <div className={classes.side}>
         <Typography variant='title'>Info Nav</Typography>
+          {infoChildren}
       </div>
     </div>
   )
@@ -122,6 +131,7 @@ class Assignment extends React.Component {
         <Typography variant='p'>
           Implement CV using CSS in JS (using classes). Change your components and style them. Bonus points for those of you who separate components into their own files (within a folder)
         </Typography>
+          <Cv section = {section}/>
         <Typography variant='title'>2. React HOC assignments</Typography>
         <Typography variant='p'>
           Using a HOC wrap the current component such that it shows the position of the mouse on page, by providing x and y to the component below.

@@ -99,16 +99,24 @@ class CollapsableContainer extends React.Component {
 
   render() {
     const { className, classes, children, ...other } = this.props
-    // TODO: place the children based on placement property
-    //  if left, place them to the leftSide
-    // otherwise place them at content
+      const childrenArray = React.Children.toArray(children)
 
-    // TODO: when dropped clone the children to add the property open as true
+      const leftChildren = childrenArray.filter(
+          (child) => child.props.item.placement === 'left')
+
+      const rightChildren = childrenArray.filter(
+          (child) => child.props.item.placement === 'right')
+
+      const rightExpanded = rightChildren.map((child) =>
+          React.cloneElement(child, { open: true, draggable: false })
+      );
+
 
     return (
       <div className={classes.content}>
         <div className={classNames(classes.leftSide, classes.card)}>
-          {children}
+          <Typography variant='title'>Left Side</Typography>
+            {leftChildren}
         </div>
         <div
           className={classNames(classes.content, classes.card)}
@@ -116,6 +124,8 @@ class CollapsableContainer extends React.Component {
           onDragOver={this.onDragOver}
           onDragLeave={this.onDragLeave}
         >
+            <Typography variant='title'>Dropped (Expanded)</Typography>
+            {rightExpanded}
         </div>
       </div>
     )
