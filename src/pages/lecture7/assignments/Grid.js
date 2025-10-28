@@ -8,27 +8,41 @@ import { Button } from "@material-ui/core";
 
 
 const styles = ({ size }) => ({
-  grid: {
-    width: '100%',
-    height: 720,
-    display: 'flex',
-    position: 'relative',
-    flexFlow: 'row wrap',
-    alignContent: 'flex-start',
-    justifyContent: 'flex-start'
-  }
+    grid: {
+        width: '100%',
+        height: 720,
+        display: 'flex',
+        position: 'relative',
+        flexFlow: 'row wrap',
+        alignContent: 'flex-start',
+        justifyContent: 'flex-start'
+    }
 })
 
 const Grid = (props) => {
 
-  const { cols = 4, spacing = 8, classes } = props
-  // depending on cols, and spacing property,
-  // i place my items
-  return (
-    <div className={classes.grid}>
-      {props.children}
-    </div>
-  )
-}
+    const { cols = 4, spacing = 8, classes, children } = props
+
+    const childrenArray = React.Children.toArray(children);
+
+    const itemWidth = `calc(${100 / cols}% - ${spacing * 2}px)`;
+
+    return (
+        <div className={classes.grid}>
+            {childrenArray.map((child, index) =>
+                React.isValidElement(child)
+                    ? React.cloneElement(child, {
+                        key: index,
+                        style: {
+                            width: itemWidth,
+                            margin: spacing,
+                            boxSizing: "border-box",
+                        },
+                    })
+                    : child
+            )}
+        </div>
+    );
+};
 
 export default withStyles(styles)(Grid)
