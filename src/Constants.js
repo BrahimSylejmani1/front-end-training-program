@@ -2,7 +2,7 @@
  * Created by LeutrimNeziri on 30/03/2019.
  */
 module.exports = {
-  API_URL: 'http://5cdde1216f4437001467a3c8.mockapi.io/api',
+  API_URL: '/mock',
   PAGES: {
     HOME: 'home',
     LECTURE_1: {

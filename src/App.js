@@ -10,6 +10,8 @@ import store, { history } from 'Store'
 import { Provider } from 'react-redux'
 
 const App = ({children}) => {
+  console.log("✅ App mounted");
+
   return (
     <Provider store={store}>
       <Suspense fallback={<div>Loading...</div>}>

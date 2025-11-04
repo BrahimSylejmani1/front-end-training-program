@@ -12,6 +12,10 @@ import SimpleLink from "presentations/rows/SimpleLink";
 import Code from "presentations/Code";
 import { CALL_API } from 'middleware/Api'
 import { API_URL } from 'Constants'
+import AssignmentsRoutes from 'pages/lecture10/AssignmentsRoutes'
+import { Route, Switch } from 'react-router-dom'
+import UsersPage from 'pages/lecture10/users/UsersView'
+import TransactionsPage from 'pages/lecture10/transactions/TransactionsView'
 
 const styles = ({ typography }) => ({
   root: {},
@@ -52,9 +56,23 @@ class Assignments extends React.Component {
 
   render() {
     const { classes, section, match: { url } } = this.props
+    if (!section || !section.children || section.children.length < 3) {
+      return (
+        <Fragment>
+          <Typography variant={'heading'}>
+            {(section && section.display) || 'Assignments'}
+            <Divider />
+          </Typography>
+          <Typography variant='p'>
+            Section data is not available. Please check the route configuration.
+          </Typography>
+        </Fragment>
+      )
+    }
     const transactions = section.children[0]
     const algorithm = section.children[1]
     const ranking = section.children[2]
+    const baseUrl = `${this.props.match.url}/assignments10`
     return (
       <Fragment>
         <Typography variant={'heading'}>
