@@ -65,7 +65,7 @@ export default store => next => action => {
   const { types, ...rest } = call
   if (!types || types.length !== 3) {
     console.error('Missing [REQUEST, SUCCESS, FAILURE] action types in CALL_API')
-    return
+    return next(action)
   }
 
   const [REQUEST, SUCCESS, FAILURE] = types

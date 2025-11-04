@@ -23,22 +23,28 @@ class Lecture10 extends React.Component {
     const props = { section, ...other };
 
     switch (section.id) {
+      case PAGES.LECTURE_10.ASSIGNMENTS:
+        const baseUrl = match.url.replace(/\/$/, '')
+        return (
+          <Switch>
+            <Route
+              path={`${baseUrl}/users/:id/transactions`}
+              render={(routeProps) => <TransactionsView {...props} {...routeProps} />}
+            />
+            <Route
+              exact
+              path={`${baseUrl}/users`}
+              render={(routeProps) => <UsersView {...props} {...routeProps} />}
+            />
+            <Route exact path={baseUrl} render={(routeProps) => <Assignments {...props} {...routeProps} />} />
+          </Switch>
+        )
+
       case PAGES.LECTURE_10.REDUX_MIDDLEWARE:
         return <ReduxMiddleware {...props} />;
 
       case PAGES.LECTURE_10.API_SERVICES:
         return <ApiServices {...props} />;
-
-      case PAGES.LECTURE_10.ASSIGNMENTS:
-        const baseUrl = match.url.replace(/\/$/, '')
-        console.log('Base URL:', baseUrl)
-        return (
-          <Switch>
-            <Route path={`${baseUrl}/users/:id/transactions`} component={TransactionsView} />
-            <Route exact path={`${baseUrl}/users`} component={UsersView} />
-            <Route exact path={baseUrl} component={Assignments} />
-          </Switch>
-        )
 
       default:
         return <Intro {...props} />;

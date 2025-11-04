@@ -56,6 +56,19 @@ class Assignments extends React.Component {
 
   render() {
     const { classes, section, match: { url } } = this.props
+    if (!section || !section.children || section.children.length < 3) {
+      return (
+        <Fragment>
+          <Typography variant={'heading'}>
+            {(section && section.display) || 'Assignments'}
+            <Divider />
+          </Typography>
+          <Typography variant='p'>
+            Section data is not available. Please check the route configuration.
+          </Typography>
+        </Fragment>
+      )
+    }
     const transactions = section.children[0]
     const algorithm = section.children[1]
     const ranking = section.children[2]

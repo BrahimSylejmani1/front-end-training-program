@@ -345,5 +345,5 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 export default withStyles(styles)(
-  connect(mapDispatchToProps)(ApiServices)
+  connect(null, mapDispatchToProps)(ApiServices)
 )
