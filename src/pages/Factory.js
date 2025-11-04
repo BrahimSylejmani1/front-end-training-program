@@ -103,7 +103,6 @@ class Factory extends React.Component {
 
 
   render() {
-    console.log("✅ Factory render");
     const {classes, ...other} = this.props
     const {match: {params: {id = PAGES.HOME} = {}} = {}} = this.props
     const breadcrumbs = this.reducer(routes, [], [], id)

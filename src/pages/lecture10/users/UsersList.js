@@ -1,10 +1,9 @@
 import React from 'react'
 import { Card, CardContent, Avatar, Typography, Button } from '@material-ui/core'
 import moment from 'moment'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 
-
-const UsersList = ({ items, onEdit, onDelete }) => (
+const UsersList = ({ items, onEdit, onDelete, match }) => (
   <div style={{ display: 'grid', gap: 12 }}>
     {items.map(u => (
       <Card key={u.id} style={{ display: 'flex', alignItems: 'center', padding: 8 }}>
@@ -22,7 +21,7 @@ const UsersList = ({ items, onEdit, onDelete }) => (
         <Button onClick={() => onDelete(u.id)} color="secondary">Delete</Button>
         <Button
           component={Link}
-          to={`${match.url}/users/${u.id}/transactions`}
+          to={`${match.url}/${u.id}/transactions`}
           color="primary"
         >
           View Transactions
@@ -32,4 +31,4 @@ const UsersList = ({ items, onEdit, onDelete }) => (
   </div>
 )
 
-export default UsersList
+export default withRouter(UsersList)
