@@ -1,0 +1,5 @@
+module.exports = {
+  TX_REQUEST: 'TX/REQUEST',
+  TX_SUCCESS: 'TX/SUCCESS',
+  TX_FAILURE: 'TX/FAILURE'
+}

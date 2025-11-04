@@ -328,17 +328,22 @@ class ApiServices extends React.Component {
   }
 }
 
+const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST'
+const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS'
+const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE'
+
 const API_CALL = {
   [CALL_API]: {
+    types: [FETCH_POSTS_REQUEST, FETCH_POSTS_SUCCESS, FETCH_POSTS_FAILURE],
     endpoint: "/posts",
+    options: { method: 'GET' }
   }
 }
-
-const mapStateToProps = (state) => ({
-})
 
 const mapDispatchToProps = (dispatch) => ({
   callApi: () => dispatch(API_CALL)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ApiServices))
+export default withStyles(styles)(
+  connect(mapDispatchToProps)(ApiServices)
+)

@@ -74,48 +74,44 @@ class Factory extends React.Component {
   }
 
   renderSections = (breadcrumbs) => {
-    const {match, match: {params: {id = ''} = {}} = {}, location} = this.props
+    const { match, location } = this.props;
 
-    let page = breadcrumbs[0]
-    switch (page.id) {
-      case PAGES.LECTURE_1.ID:
-        return <Lecture1 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_2.ID:
-        return <Lecture2 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_3.ID:
-        return <Lecture3 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_4.ID:
-        return <Lecture4 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_5.ID:
-        return <Lecture5 breadcrumbs={breadcrumbs} location={location} match={match}/>
-      case PAGES.LECTURE_7.ID:
-        return <Lecture7 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_8.ID:
-        return <Lecture8 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_9.ID:
-        return <Lecture9 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_10.ID:
-        return <Lecture10 breadcrumbs={breadcrumbs} location={location} match={match} />
-      case PAGES.LECTURE_11.ID:
-        return <Lecture11 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_12.ID:
-        return <Lecture12 breadcrumbs={breadcrumbs} />
-      case PAGES.LECTURE_13.ID:
-        return <Lecture13 breadcrumbs={breadcrumbs} />
-      case PAGES.SUPPORT.ID:
-        return <Support breadcrumbs={breadcrumbs} />
-      case PAGES.PLAYGROUND:
-        return <Playground page={page} />
-      default:
-        return <Home/>
+    if (!breadcrumbs || breadcrumbs.length === 0) {
+      return <div style={{ padding: 20, color: 'red' }}>⚠️ No matching route found.</div>;
     }
-  }
+
+    const page = breadcrumbs[0];
+    switch (page.id) {
+      case PAGES.LECTURE_1.ID: return <Lecture1 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_2.ID: return <Lecture2 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_3.ID: return <Lecture3 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_4.ID: return <Lecture4 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_5.ID: return <Lecture5 breadcrumbs={breadcrumbs} location={location} match={match} />;
+      case PAGES.LECTURE_7.ID: return <Lecture7 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_8.ID: return <Lecture8 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_9.ID: return <Lecture9 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_10.ID: return <Lecture10 breadcrumbs={breadcrumbs} location={location} match={match} />;
+      case PAGES.LECTURE_11.ID: return <Lecture11 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_12.ID: return <Lecture12 breadcrumbs={breadcrumbs} />;
+      case PAGES.LECTURE_13.ID: return <Lecture13 breadcrumbs={breadcrumbs} />;
+      case PAGES.SUPPORT.ID: return <Support breadcrumbs={breadcrumbs} />;
+      case PAGES.PLAYGROUND: return <Playground page={page} />;
+      default: return <Home />;
+    }
+  };
+
 
 
   render() {
+    console.log("✅ Factory render");
     const {classes, ...other} = this.props
     const {match: {params: {id = PAGES.HOME} = {}} = {}} = this.props
     const breadcrumbs = this.reducer(routes, [], [], id)
+    if (!breadcrumbs || breadcrumbs.length === 0) {
+      console.warn('⚠️ Factory: no breadcrumbs match for id:', id);
+      return <div style={{ padding: 20, color: 'gray' }}>Loading route...</div>;
+    }
+
     return (
       <Content breadcrumbs={breadcrumbs} {...other}>
         {this.renderSections(breadcrumbs)}

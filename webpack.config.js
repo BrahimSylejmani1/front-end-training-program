@@ -46,14 +46,19 @@ module.exports = {
     devServer: {
         historyApiFallback: true,
     },
-    resolve: {
-        extensions: ['.js', '.jsx'],
-        modules: [
-            'node_modules',
-            path.resolve(APP_DIR)
-        ]
-    },
-    plugins: [
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    modules: [
+      'node_modules',
+      path.resolve(APP_DIR),
+      path.resolve(APP_DIR, 'reducers'),
+      path.resolve(APP_DIR, 'middleware'),
+      path.resolve(APP_DIR, 'pages'),
+      path.resolve(APP_DIR, 'presentations'),
+      path.resolve(APP_DIR, 'lecture10')
+    ]
+  },
+  plugins: [
         new HtmlWebpackPlugin({
             hash: true,
             template:`${APP_DIR}/index.html`,

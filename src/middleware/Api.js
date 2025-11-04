@@ -57,10 +57,27 @@ export const CALL_API = Symbol('Call API')
  * Intercepts CALL_API actions to perform the call to the API server
  */
 export default store => next => action => {
-    const call = action[CALL_API]
-    // Only apply this middleware if we are calling an API
-    if (typeof call === 'undefined') {
-        return next(action)
-    }
-    return callApi(call, store)
+  const call = action[CALL_API]
+  if (typeof call === 'undefined') {
+    return next(action)
+  }
+
+  const { types, ...rest } = call
+  if (!types || types.length !== 3) {
+    console.error('Missing [REQUEST, SUCCESS, FAILURE] action types in CALL_API')
+    return
+  }
+
+  const [REQUEST, SUCCESS, FAILURE] = types
+  store.dispatch({ type: REQUEST })
+
+  return callApi(rest, store)
+    .then(response => {
+      store.dispatch({ type: SUCCESS, response })
+      return response
+    })
+    .catch(error => {
+      store.dispatch({ type: FAILURE, error })
+      throw error
+    })
 }

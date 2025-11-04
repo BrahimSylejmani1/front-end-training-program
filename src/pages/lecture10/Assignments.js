@@ -12,6 +12,10 @@ import SimpleLink from "presentations/rows/SimpleLink";
 import Code from "presentations/Code";
 import { CALL_API } from 'middleware/Api'
 import { API_URL } from 'Constants'
+import AssignmentsRoutes from 'pages/lecture10/AssignmentsRoutes'
+import { Route, Switch } from 'react-router-dom'
+import UsersPage from 'pages/lecture10/users/UsersView'
+import TransactionsPage from 'pages/lecture10/transactions/TransactionsView'
 
 const styles = ({ typography }) => ({
   root: {},
@@ -55,6 +59,7 @@ class Assignments extends React.Component {
     const transactions = section.children[0]
     const algorithm = section.children[1]
     const ranking = section.children[2]
+    const baseUrl = `${this.props.match.url}/assignments10`
     return (
       <Fragment>
         <Typography variant={'heading'}>
